@@ -10,7 +10,6 @@
 | Arquivo / Pasta | Descrição |
 |---|---|
 | [`hands-on-ibm-bob-wxo-print.html`](./hands-on-ibm-bob-wxo-print.html) | Material completo do workshop em HTML (imprimível / PDF) |
-| [`hands-on-ibm-bob-wxo.md`](./hands-on-ibm-bob-wxo.md) | Fonte em Markdown do material |
 | [`senai-agent/`](./senai-agent/) | Esqueleto do projeto construído durante o workshop |
 | [`docs/`](./docs/) | Imagens e recursos auxiliares |
 
@@ -54,7 +53,7 @@
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/<seu-usuario>/hands-on-wxo-bob.git
+git clone https://github.com/sergiogama/hands-on-wxo-bob.git
 cd hands-on-wxo-bob
 ```
 
