@@ -9,7 +9,7 @@
 
 | Arquivo / Pasta | Descrição |
 |---|---|
-| [`hands-on-ibm-bob-wxo-print.html`](./hands-on-ibm-bob-wxo-print.html) | Material completo do workshop em HTML (imprimível / PDF) |
+| [`index.html`](./index.html) | Material completo do workshop em HTML (imprimível / PDF) |
 | [`senai-agent/`](./senai-agent/) | Esqueleto do projeto construído durante o workshop |
 
 ---
@@ -113,7 +113,7 @@ senai-agent/
 
 ## 📄 Leitura do material
 
-Abra o arquivo [`hands-on-ibm-bob-wxo-print.html`](./hands-on-ibm-bob-wxo-print.html) diretamente no browser para visualizar ou imprimir o material completo do workshop.
+Abra o arquivo [`index.html`](./index.html) diretamente no browser para visualizar ou imprimir o material completo do workshop.
 
 ---
 
