@@ -11,7 +11,6 @@
 |---|---|
 | [`hands-on-ibm-bob-wxo-print.html`](./hands-on-ibm-bob-wxo-print.html) | Material completo do workshop em HTML (imprimível / PDF) |
 | [`senai-agent/`](./senai-agent/) | Esqueleto do projeto construído durante o workshop |
-| [`docs/`](./docs/) | Imagens e recursos auxiliares |
 
 ---
 
