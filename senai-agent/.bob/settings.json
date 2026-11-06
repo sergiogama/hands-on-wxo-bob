@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [{ "type": "command", "command": "sh ~/.bob/hooks/session-start.sh" }]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "^write_file$",
+        "hooks": [{ "type": "command", "command": "sh ~/.bob/hooks/log-writes.sh" }]
+      }
+    ]
+  }
+}

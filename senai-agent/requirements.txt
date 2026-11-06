@@ -1,0 +1,6 @@
+ibm-watsonx-orchestrate-adk
+requests
+python-dotenv
+mcp
+pytest
+pytest-cov

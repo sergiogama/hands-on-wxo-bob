@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "senai-empresa": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["-m", "mcp_server.senai_empresa_mcp.server"],
+      "alwaysAllow": ["listar_solucoes", "detalhar_solucao"],
+      "disabled": false
+    }
+  }
+}

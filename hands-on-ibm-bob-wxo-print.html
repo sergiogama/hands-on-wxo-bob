@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Hands-On IBM Bob + watsonx Orchestrate — SENAI Para Sua Empresa</title>
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 13px; }
+body {
+  font-family: -apple-system, "Segoe UI", system-ui, Arial, sans-serif;
+  color: #1a1a2e;
+  background: #fff;
+  line-height: 1.6;
+}
+
+/* ===== PRINT ===== */
+@media print {
+  .no-print { display: none !important; }
+  .page-break { page-break-before: always; }
+  body { font-size: 11px; }
+  pre { font-size: 9px; white-space: pre-wrap; word-break: break-all; }
+  .cover { min-height: auto; padding: 40px; }
+}
+
+/* ===== LAYOUT ===== */
+.container { max-width: 900px; margin: 0 auto; padding: 0 32px 60px; }
+
+/* ===== COVER PAGE ===== */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 50px 60px;
+  background: linear-gradient(160deg, #0f1b3d 0%, #1a3a6e 50%, #0a2150 100%);
+  color: #fff;
+  page-break-after: always;
+}
+.cover-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.cover-logo-area { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+.cover-ibm-logo { opacity: .9; }
+.cover-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 60px 0 40px; }
+.cover-eyebrow {
+  font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  color: #64b5f6; margin-bottom: 18px;
+}
+.cover-title {
+  font-size: 40px; font-weight: 800; line-height: 1.15;
+  color: #ffffff; margin-bottom: 14px;
+}
+.cover-subtitle {
+  font-size: 16px; color: #b0c4de; margin-bottom: 40px; max-width: 560px;
+}
+.cover-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 50px; }
+.cover-tag {
+  border: 1px solid rgba(100,181,246,.5);
+  color: #64b5f6; font-size: 11px; font-weight: 600;
+  padding: 4px 14px; border-radius: 20px; letter-spacing: .5px;
+}
+.cover-bottom {
+  border-top: 1px solid rgba(255,255,255,.15);
+  padding-top: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.cover-author-block { }
+.cover-author-label { font-size: 10px; color: #90a8c8; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.cover-author-name { font-size: 18px; font-weight: 700; color: #fff; }
+.cover-author-title { font-size: 12px; color: #90c8e8; margin-top: 2px; }
+.cover-date { font-size: 14px; color: #90c8e8; text-align: right; }
+
+/* ===== TOC ===== */
+.toc-page { padding: 60px 60px; page-break-after: always; }
+.toc-header { margin-bottom: 32px; }
+.toc-header h1 { font-size: 26px; font-weight: 800; color: #1a1a2e; }
+.toc-header .divider { width: 50px; height: 4px; background: #1565c0; margin-top: 8px; border-radius: 2px; }
+.toc-list { list-style: none; }
+.toc-list li { display: flex; align-items: baseline; gap: 8px; padding: 6px 0; border-bottom: 1px dashed #e0e0e0; }
+.toc-num { font-size: 11px; font-weight: 700; color: #1565c0; min-width: 28px; }
+.toc-title { font-size: 13px; color: #333; flex: 1; }
+.toc-dots { flex: 1; border-bottom: 1px dotted #ccc; min-width: 40px; margin: 0 8px; height: 1em; }
+.toc-page-num { font-size: 11px; color: #999; }
+
+/* ===== PAGE LAYOUT ===== */
+.doc-page { padding: 48px 60px; }
+
+/* ===== MODULE HEADER ===== */
+.module-header {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 24px; padding-bottom: 14px;
+  border-bottom: 2px solid #1565c0;
+}
+.module-num-badge {
+  background: #1565c0; color: #fff;
+  font-size: 11px; font-weight: 700; letter-spacing: 1px;
+  padding: 5px 12px; border-radius: 4px; flex-shrink: 0;
+  text-transform: uppercase;
+}
+.module-num-badge.green { background: #2e7d32; }
+.module-num-badge.gray  { background: #546e7a; }
+.module-title { font-size: 20px; font-weight: 800; color: #1a1a2e; }
+
+/* ===== SECTION TITLES ===== */
+h3 {
+  font-size: 12px; font-weight: 700; color: #1565c0;
+  text-transform: uppercase; letter-spacing: .6px;
+  margin: 22px 0 8px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #e3eaf5;
+}
+h3:first-child { margin-top: 0; }
+p { margin-bottom: 10px; font-size: 13px; color: #333; }
+ul, ol { padding-left: 20px; margin-bottom: 12px; }
+li { margin-bottom: 4px; font-size: 13px; }
+
+/* ===== CODE BLOCKS ===== */
+pre {
+  background: #0d1117;
+  color: #e6edf3;
+  border-radius: 6px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.5;
+  margin: 8px 0 14px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  border-left: 3px solid #1565c0;
+}
+code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 11px; background: #e8edf5; color: #c0392b;
+  padding: 1px 5px; border-radius: 3px;
+}
+pre code { background: none; color: inherit; font-size: inherit; padding: 0; }
+
+/* ===== TABLES ===== */
+table { width: 100%; border-collapse: collapse; margin: 10px 0 16px; font-size: 12px; }
+th { background: #1565c0; color: #fff; padding: 8px 10px; text-align: left; font-weight: 600; }
+td { border: 1px solid #dce4f0; padding: 7px 10px; vertical-align: top; color: #333; }
+tr:nth-child(even) td { background: #f5f8ff; }
+
+/* ===== FIELD TABLE ===== */
+.field-table { border: 1px solid #dce4f0; border-radius: 6px; overflow: hidden; margin: 10px 0 16px; }
+.field-row { display: flex; gap: 12px; padding: 9px 14px; border-bottom: 1px solid #edf1f9; font-size: 12px; }
+.field-row:last-child { border-bottom: none; }
+.field-label { font-weight: 700; min-width: 140px; color: #1565c0; flex-shrink: 0; }
+.field-val { color: #333; }
+
+/* ===== FILE TREE ===== */
+.filetree {
+  background: #f8f9fc; border: 1px solid #dce4f0; border-radius: 6px;
+  padding: 12px 16px;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 11px; line-height: 1.8; margin: 8px 0 14px; color: #333;
+}
+
+/* ===== CALLOUTS ===== */
+.callout {
+  border-left: 4px solid #1565c0; background: #e8f0fe;
+  padding: 10px 14px; border-radius: 0 5px 5px 0;
+  margin: 8px 0 14px; font-size: 12px; color: #333;
+}
+.callout.warn  { border-color: #e65100; background: #fff3e0; }
+.callout.danger{ border-color: #c62828; background: #fce4e4; }
+
+/* ===== FLOW DIAGRAM ===== */
+.flow-box {
+  background: #0d1117; color: #e6edf3;
+  border-radius: 8px; padding: 20px 28px; margin: 12px 0 20px;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 12px; line-height: 2; text-align: center;
+  border: 1px solid #30363d;
+}
+.flow-box .arrow { color: #58a6ff; font-weight: bold; }
+.flow-box .hi-blue { color: #79c0ff; }
+.flow-box .hi-green { color: #7ee787; }
+.flow-box .hi-purple { color: #d2a8ff; }
+.flow-box .hi-orange { color: #ffa657; }
+
+/* ===== SEPARATORS ===== */
+hr { border: none; border-top: 1px solid #e0e0e0; margin: 28px 0; }
+
+/* ===== FOOTER ===== */
+.doc-footer {
+  margin-top: 60px;
+  padding-top: 20px;
+  border-top: 2px solid #1565c0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #888;
+}
+
+/* ===== PRINT BUTTON ===== */
+.print-btn {
+  position: fixed; bottom: 30px; right: 30px;
+  background: #1565c0; color: #fff; border: none;
+  padding: 12px 24px; border-radius: 6px; font-size: 14px;
+  font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.3);
+  z-index: 1000;
+}
+.print-btn:hover { background: #1976d2; }
+</style>
+</head>
+<body>
+
+<!-- PRINT BUTTON -->
+<button class="print-btn no-print" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+
+<!-- ===== CAPA ===== -->
+<div class="cover">
+  <div class="cover-top">
+    <!-- TD SYNNEX LOGO -->
+    <img src="data:image/png;base64,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" alt="TD SYNNEX" style="height:52px; filter:brightness(0) invert(1); opacity:0.95;">
+    <!-- IBM Bob + watsonx logos area -->
+    <div class="cover-logo-area">
+      <svg width="80" height="28" viewBox="0 0 80 28" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="5" width="6" height="18" fill="#fff" opacity=".9" rx="1"/>
+        <rect x="8" y="5" width="14" height="18" fill="#fff" opacity=".9" rx="1"/>
+        <rect x="8" y="5" width="14" height="5" fill="#0d1117" opacity=".5" rx="0"/>
+        <rect x="8" y="18" width="14" height="5" fill="#0d1117" opacity=".5" rx="0"/>
+        <rect x="24" y="5" width="6" height="18" fill="#fff" opacity=".9" rx="1"/>
+        <text x="35" y="20" font-family="Arial" font-size="13" fill="#fff" opacity=".9" font-weight="700">Bob</text>
+      </svg>
+      <span style="font-size:10px;color:#90a8c8;letter-spacing:1px;">+ watsonx Orchestrate</span>
+    </div>
+  </div>
+
+  <div class="cover-body">
+    <div class="cover-eyebrow">Hands-On Workshop · Treinamento Técnico</div>
+    <div class="cover-title">IBM Bob<br>+ watsonx Orchestrate<br>+ Code Engine</div>
+    <div class="cover-subtitle">
+      Criando um agente de IA especializado no portal SENAI <em>Para Sua Empresa</em>:
+      consultas a cursos, soluções e inscrições via MCP Server, com IBM Bob (CLI),
+      ADK Python, Hooks, Skills, Custom Modes e deploy no IBM Cloud Code Engine.
+    </div>
+    <div class="cover-tags">
+      <span class="cover-tag">IBM Bob</span>
+      <span class="cover-tag">watsonx Orchestrate</span>
+      <span class="cover-tag">Python ADK</span>
+      <span class="cover-tag">MCP Server</span>
+      <span class="cover-tag">IBM Cloud Code Engine</span>
+      <span class="cover-tag">SENAI Para Sua Empresa</span>
+    </div>
+  </div>
+
+  <div class="cover-bottom">
+    <div class="cover-author-block">
+      <div class="cover-author-label">Autor</div>
+      <div class="cover-author-name">Sergio Gama</div>
+      <div class="cover-author-title">Principal AI Solution Architect · TD Synnex</div>
+    </div>
+    <div class="cover-date">
+      Novembro / 2026<br>
+      <span style="font-size:11px;color:#6a8caa;">Versão 1.0</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SUMÁRIO ===== -->
+<div class="toc-page">
+  <div class="toc-header">
+    <h1>Sumário</h1>
+    <div class="divider"></div>
+  </div>
+  <ul class="toc-list">
+    <li><span class="toc-num">01</span><span class="toc-title">Visão Geral da Solução</span></li>
+    <li><span class="toc-num">02</span><span class="toc-title">Instalando o IBM Bob</span></li>
+    <li><span class="toc-num">03</span><span class="toc-title">Ambiente Python e Credenciais</span></li>
+    <li><span class="toc-num">04</span><span class="toc-title">Criando o Agente na Interface Web</span></li>
+    <li><span class="toc-num">05</span><span class="toc-title">PDF de Conhecimento Base (RAG)</span></li>
+    <li><span class="toc-num">06</span><span class="toc-title">Criando o Agente Python com ADK</span></li>
+    <li><span class="toc-num">07</span><span class="toc-title">MCP Server — SENAI Para Sua Empresa</span></li>
+    <li><span class="toc-num">08</span><span class="toc-title">Conectando o MCP SENAI no IBM Bob</span></li>
+    <li><span class="toc-num">09</span><span class="toc-title">Hooks de Lifecycle</span></li>
+    <li><span class="toc-num">10</span><span class="toc-title">Skills</span></li>
+    <li><span class="toc-num">11</span><span class="toc-title">Custom Modes</span></li>
+    <li><span class="toc-num">12</span><span class="toc-title">Templates de Prompts</span></li>
+    <li><span class="toc-num">13</span><span class="toc-title">AGENTS.md e Contexto do Projeto</span></li>
+    <li><span class="toc-num">14</span><span class="toc-title">Dockerfile e Build da Imagem</span></li>
+    <li><span class="toc-num">15</span><span class="toc-title">Deploy no IBM Cloud Code Engine</span></li>
+    <li><span class="toc-num">A</span><span class="toc-title">Apêndice A — Estrutura de Arquivos</span></li>
+    <li><span class="toc-num">B</span><span class="toc-title">Apêndice B — Checklist de Credenciais</span></li>
+    <li><span class="toc-num">C</span><span class="toc-title">Apêndice C — Troubleshooting</span></li>
+  </ul>
+</div>
+
+<!-- ===== MÓDULO 1 ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge">Módulo 01</span>
+    <span class="module-title">Visão Geral da Solução</span>
+  </div>
+
+  <h3>O que é IBM Bob?</h3>
+  <p>IBM Bob é um assistente de IA para desenvolvedores distribuído como aplicativo standalone que embute o VS Code — basta baixar e instalar o <strong>IBM Bob</strong> diretamente em <strong>bob.ibm.com</strong>, sem instalar o VS Code separadamente. O editor já vem integrado e oferece capacidades agentic completas: leitura de arquivos, geração de código, execução de comandos, MCP servers, hooks, skills e modos customizados.</p>
+
+  <h3>O que é watsonx Orchestrate?</h3>
+  <p>IBM watsonx Orchestrate é uma plataforma de orquestração de agentes de IA que permite criar, compor e implantar agentes inteligentes capazes de executar fluxos de trabalho complexos integrando ferramentas externas via MCP, APIs REST e toolkits nativos.</p>
+
+  <h3>O que é IBM Cloud Code Engine?</h3>
+  <p>Code Engine é uma plataforma serverless totalmente gerenciada da IBM Cloud que executa workloads em contêineres sem necessidade de gerenciar infraestrutura. Escala automaticamente de 0 a N instâncias conforme a demanda. Usaremos o Code Engine para hospedar o agente Python após o desenvolvimento.</p>
+
+  <h3>Sobre o Agente deste Workshop</h3>
+  <p>Neste workshop construímos o <strong>SenaiEmpresaAssistant</strong> — um agente especializado no portal <a href="https://www.senai.portaldaindustria.com.br/para-sua-empresa">SENAI Para Sua Empresa</a>. O agente é capaz de:</p>
+  <ul>
+    <li>Responder perguntas sobre cursos, soluções tecnológicas e serviços para empresas oferecidos pelo SENAI</li>
+    <li>Listar e detalhar categorias de capacitação corporativa disponíveis</li>
+    <li>Orientar sobre consultoria tecnológica e inovação</li>
+    <li>Realizar inscrições de empresas em programas SENAI via MCP Server</li>
+  </ul>
+
+  <h3>Fluxo do workshop</h3>
+  <div class="flow-box">
+    <span class="hi-blue">[IBM Bob]</span> <span class="arrow">→ desenvolve e testa →</span> <span class="hi-blue">[Projeto Python + MCP Server SENAI]</span><br>
+    <span class="arrow">↓</span><br>
+    <span class="hi-green">[Docker image → IBM Container Registry]</span><br>
+    <span class="arrow">↓</span><br>
+    <span class="hi-purple">[IBM Cloud Code Engine (deploy serverless)]</span><br>
+    <span class="arrow">↓</span><br>
+    <span class="hi-orange">[watsonx Orchestrate consome o agente]</span>
+  </div>
+
+  <h3>Pré-requisitos</h3>
+  <ul>
+    <li><strong>IBM Bob</strong> instalado (download em <code>bob.ibm.com</code> — inclui VS Code embutido)</li>
+    <li>Python 3.10+</li>
+    <li>Docker Desktop instalado e rodando</li>
+    <li>Conta IBM Cloud com acesso ao Code Engine e Container Registry</li>
+    <li>Conta IBM watsonx Orchestrate</li>
+    <li>Acesso à internet para consumir a API pública do portal SENAI</li>
+  </ul>
+</div>
+
+<!-- ===== MÓDULO 2 ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge">Módulo 02</span>
+    <span class="module-title">Instalando e Configurando o IBM Bob</span>
+  </div>
+
+  <h3>2.1 Instalação — IBM Bob</h3>
+  <ol>
+    <li>Acesse <strong>bob.ibm.com</strong> e faça o download do IBM Bob para o seu sistema operacional</li>
+    <li>Execute o instalador — o IBM Bob já inclui o VS Code embutido, não é necessário instalar o VS Code separadamente</li>
+    <li>Ao abrir o IBM Bob pela primeira vez, o editor estará pronto para uso</li>
+  </ol>
+
+  <h3>2.2 Autenticação no IBM Bob</h3>
+  <p><strong>Método 1 — SSO / IBMid (recomendado):</strong></p>
+  <ol>
+    <li>Abra o IBM Bob</li>
+    <li>Clique em <strong>Sign in</strong> — o Bob abrirá <code>bob.ibm.com/login</code> no browser automaticamente</li>
+    <li>Faça login com seu IBMid ou SSO corporativo</li>
+    <li>Retorne ao IBM Bob — a autenticação será concluída automaticamente</li>
+  </ol>
+
+  <p><strong>Método 2 — API Key:</strong></p>
+  <ol>
+    <li>Acesse <strong>https://bob.ibm.com → Account → API Keys → Create API Key</strong></li>
+    <li>Defina o Scope como <code>Inference</code> e copie o valor gerado</li>
+    <li>No IBM Bob, abra as configurações (<kbd>Ctrl+,</kbd> / <kbd>Cmd+,</kbd>) e cole a API Key no campo <code>IBM Bob: API Key</code></li>
+  </ol>
+  <div class="callout warn"><strong>Atenção:</strong> Nunca compartilhe sua API Key nem a commite no repositório.</div>
+
+  <h3>2.3 Primeira sessão com IBM Bob</h3>
+  <ol>
+    <li>Abra a pasta <code>senai-agent/</code> no IBM Bob (<strong>File → Open Folder</strong>)</li>
+    <li>Abra o painel de chat clicando no ícone do IBM Bob na barra de navegação (ou <kbd>Option+Cmd+B</kbd> no Mac / <kbd>Ctrl+Alt+B</kbd> no Windows)</li>
+    <li>No chat, use os comandos de barra para inicializar o projeto:</li>
+  </ol>
+  <pre># No painel de chat do IBM Bob:
+/init    # gera AGENTS.md e arquivos de contexto
+/mode    # lista modos disponíveis
+/skills  # lista skills disponíveis</pre>
+</div>
+
+<!-- ===== MÓDULO 3 ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge">Módulo 03</span>
+    <span class="module-title">Ambiente Python e Credenciais</span>
+  </div>
+
+  <h3>3.1 Setup Python</h3>
+  <pre>python3 --version                  # >= 3.10 obrigatório
+python3 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+pip install ibm-watsonx-orchestrate-adk requests python-dotenv mcp</pre>
+
+  <h3>3.2 Estrutura do projeto Python</h3>
+  <div class="filetree">senai-agent/
+├── .env                   ← NÃO commitar (credenciais reais)
+├── .env.example           ← commitar (template sem valores)
+├── requirements.txt
+├── Dockerfile
+├── .dockerignore
+├── AGENTS.md              ← gerado por /init
+├── agents/
+│   └── senai_empresa_agent/
+│       ├── __init__.py
+│       ├── agent.py       ← definição do agente ADK
+│       └── tools.py       ← tools SENAI (listar, detalhar, inscrever)
+├── mcp_server/
+│   └── senai_empresa_mcp/
+│       ├── __init__.py
+│       └── server.py      ← MCP server Python STDIO
+├── scripts/
+│   └── deploy.sh          ← deploy completo no Code Engine
+└── .bob/
+    ├── mcp.json
+    ├── settings.json
+    ├── custom_modes.yaml
+    ├── skills/
+    │   ├── senai-empresa-consulta/SKILL.md
+    │   ├── senai-empresa-inscricao/SKILL.md
+    │   └── generate-unit-tests/SKILL.md
+    └── prompts/
+        ├── consultar-senai-empresa.md
+        ├── iniciar-inscricao.md
+        └── gerar-docs.md</div>
+
+  <h3>3.3 Arquivo .env.example (template — commitar)</h3>
+  <pre># ======================================================
+# IDENTIDADES E CREDENCIAIS — Copie para .env e preencha
+# ======================================================
+
+# IBM Bob
+BOB_API_KEY=&lt;SUA_BOB_API_KEY&gt;
+
+# watsonx Orchestrate ADK
+ORCHESTRATE_API_KEY=&lt;SUA_ORCHESTRATE_API_KEY&gt;
+ORCHESTRATE_INSTANCE_URL=https://api.us-south.watson.ai/v1
+
+# IBM Cloud (Code Engine + Container Registry)
+IBM_CLOUD_API_KEY=&lt;SUA_IBM_CLOUD_API_KEY&gt;
+IBM_CLOUD_REGION=us-south
+IBM_CLOUD_RESOURCE_GROUP=Default
+IBM_CLOUD_REGISTRY_NAMESPACE=&lt;SEU_NAMESPACE_ICR&gt;
+CODE_ENGINE_PROJECT=senai-agent-project</pre>
+
+  <div class="callout danger"><strong>Importante:</strong> Adicione <code>.env</code> ao <code>.gitignore</code>. Apenas o <code>.env.example</code> (sem valores) vai para o repositório. Nunca commite credenciais reais.</div>
+
+  <h3>3.4 Criar .env e autenticar</h3>
+  <pre>cp .env.example .env
+# Edite .env com seus valores reais
+
+source .env
+wx-orchestrate login --api-key $ORCHESTRATE_API_KEY</pre>
+</div>
+
+<!-- ===== MÓDULO 4 ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge">Módulo 04</span>
+    <span class="module-title">Criando o Agente — Interface Web watsonx Orchestrate</span>
+  </div>
+
+  <h3>4.1 Definição do agente</h3>
+  <div class="field-table">
+    <div class="field-row"><span class="field-label">Nome</span><span class="field-val"><code>SenaiEmpresaAssistant</code></span></div>
+    <div class="field-row"><span class="field-label">Descrição</span><span class="field-val">Agente especializado no portal SENAI Para Sua Empresa. Responde sobre cursos, capacitações corporativas, consultoria tecnológica e soluções para empresas. Permite realizar inscrições em programas SENAI via MCP Server.</span></div>
+    <div class="field-row"><span class="field-label">Behavior</span><span class="field-val">Responda sempre em português. Baseie suas respostas nas informações do portal SENAI Para Sua Empresa (https://www.senai.portaldaindustria.com.br/para-sua-empresa). Para inscrições, utilize as tools do MCP Server e confirme os dados com o usuário antes de submeter. Quando não souber a resposta, diga claramente e oriente o usuário a acessar o portal.</span></div>
+    <div class="field-row"><span class="field-label">Modelo</span><span class="field-val"><code>ibm/granite-3-8b-instruct</code></span></div>
+    <div class="field-row"><span class="field-label">Temperatura</span><span class="field-val"><code>0.3</code> (respostas mais determinísticas)</span></div>
+  </div>
+
+  <h3>4.2 Passo a passo na interface</h3>
+  <ol>
+    <li>Acesse o console do watsonx Orchestrate</li>
+    <li>Navegue até <strong>Agents → Create agent</strong></li>
+    <li>Preencha <strong>Name</strong>: <code>SenaiEmpresaAssistant</code></li>
+    <li>Cole a <strong>Description</strong> e o <strong>Behavior</strong> da tabela acima nos campos correspondentes</li>
+    <li>Selecione o modelo <code>ibm/granite-3-8b-instruct</code></li>
+    <li>Clique em <strong>Save</strong></li>
+  </ol>
+
+  <h3>4.3 Adicionando conhecimento base (RAG)</h3>
+  <ol>
+    <li>Na aba <strong>Knowledge</strong>, clique em <strong>Add document</strong></li>
+    <li>Faça upload do arquivo <code>knowledge-base-senai-empresas.pdf</code></li>
+    <li>Aguarde o processamento — a indexação vetorial é automática</li>
+    <li>O agente passará a responder com base no conteúdo do portal SENAI Para Sua Empresa</li>
+  </ol>
+</div>
+
+<!-- ===== MÓDULO 5 ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge">Módulo 05</span>
+    <span class="module-title">PDF de Conhecimento Base (RAG)</span>
+  </div>
+
+  <h3>5.1 Estrutura recomendada do documento</h3>
+  <div class="filetree">knowledge-base-senai-empresas.pdf
+├── 1. SENAI Para Sua Empresa — Visão Geral
+│   ├── Missão e proposta de valor para empresas
+│   ├── Áreas de atuação: Indústria, Varejo, Serviços
+│   └── Como contratar soluções SENAI
+├── 2. Capacitação Corporativa
+│   ├── Cursos in company e abertos
+│   ├── Modalidades: presencial, EAD, híbrido
+│   └── Trilhas por segmento industrial
+├── 3. Consultoria e Inovação
+│   ├── Diagnóstico de processos e tecnologia
+│   ├── Projetos de P&D e transferência de tecnologia
+│   └── Certificações e normas técnicas
+└── 4. Como se Inscrever
+    ├── Processo de inscrição online
+    ├── Documentação necessária
+    └── Contato e atendimento regional</div>
+
+  <h3>5.2 Gerando com IBM Bob + Pandoc</h3>
+  <p>No painel de chat do IBM Bob, envie o seguinte prompt:</p>
+  <pre>"Gere um Markdown chamado knowledge-base-senai-empresas.md com:
+- Visão geral do portal SENAI Para Sua Empresa
+- Catálogo de cursos e capacitações corporativas disponíveis
+- Soluções de consultoria tecnológica e inovação
+- Processo de inscrição e contato regional"
+
+# Converter para PDF com pandoc
+pandoc knowledge-base-senai-empresas.md -o knowledge-base-senai-empresas.pdf \
+  --pdf-engine=xelatex \
+  -V geometry:margin=2cm \
+  -V lang=pt-BR</pre>
+</div>
+
+<!-- ===== MÓDULO 6 ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge">Módulo 06</span>
+    <span class="module-title">Criando o Agente Python com ADK</span>
+  </div>
+
+  <h3>6.1 agents/senai_empresa_agent/tools.py</h3>
+  <pre># agents/senai_empresa_agent/tools.py
+import os, requests
+from ibm_watsonx_orchestrate.agent_builder.tools import tool
+
+SENAI_BASE_URL = "https://www.senai.portaldaindustria.com.br"
+SENAI_EMPRESA_URL = f"{SENAI_BASE_URL}/para-sua-empresa"
+
+@tool
+def listar_solucoes_senai(categoria: str = "") -> list:
+    """Lista soluções e serviços disponíveis no portal SENAI Para Sua Empresa.
+    Args:
+        categoria: Categoria para filtrar (ex: "capacitacao", "consultoria", "inovacao").
+                   Vazio = todas as categorias.
+    Returns:
+        Lista de dicionários com nome, categoria, descricao e url.
+    """
+    # Em produção, esta tool consome a API REST do portal SENAI.
+    # Durante o workshop, retorna dados representativos para demonstração.
+    solucoes = [
+        {"nome": "Capacitação In Company", "categoria": "capacitacao",
+         "descricao": "Treinamentos customizados para equipes na empresa",
+         "url": f"{SENAI_EMPRESA_URL}/capacitacao-corporativa"},
+        {"nome": "Consultoria em Processos Industriais", "categoria": "consultoria",
+         "descricao": "Diagnóstico e melhoria de processos produtivos",
+         "url": f"{SENAI_EMPRESA_URL}/consultoria"},
+        {"nome": "Laboratórios e Ensaios Tecnológicos", "categoria": "inovacao",
+         "descricao": "Testes e certificações para produtos industriais",
+         "url": f"{SENAI_EMPRESA_URL}/laboratorios"},
+        {"nome": "Projetos de Inovação e P&D", "categoria": "inovacao",
+         "descricao": "Desenvolvimento conjunto de soluções tecnológicas",
+         "url": f"{SENAI_EMPRESA_URL}/inovacao"},
+    ]
+    if categoria:
+        return [s for s in solucoes if s["categoria"] == categoria]
+    return solucoes
+
+@tool
+def detalhar_solucao_senai(nome_solucao: str) -> dict:
+    """Retorna detalhes completos de uma solução SENAI Para Sua Empresa.
+    Args:
+        nome_solucao: Nome da solução (ex: "Capacitação In Company")
+    Returns:
+        Dicionário com nome, descricao, publico_alvo, modalidades, contato e url.
+    """
+    catalogo = {
+        "Capacitação In Company": {
+            "nome": "Capacitação In Company",
+            "descricao": "Treinamentos técnicos e comportamentais desenvolvidos "
+                         "sob medida para a realidade da sua empresa.",
+            "publico_alvo": "Equipes industriais, operadores, supervisores e gestores",
+            "modalidades": ["Presencial na empresa", "EAD", "Híbrido"],
+            "contato": "https://www.senai.portaldaindustria.com.br/contato",
+            "url": f"{SENAI_EMPRESA_URL}/capacitacao-corporativa",
+        },
+        "Consultoria em Processos Industriais": {
+            "nome": "Consultoria em Processos Industriais",
+            "descricao": "Diagnóstico completo de processos produtivos com "
+                         "plano de ação para ganhos de eficiência e qualidade.",
+            "publico_alvo": "Indústrias de manufatura, alimentos, metalurgia e afins",
+            "modalidades": ["Presencial", "Remoto"],
+            "contato": "https://www.senai.portaldaindustria.com.br/contato",
+            "url": f"{SENAI_EMPRESA_URL}/consultoria",
+        },
+    }
+    return catalogo.get(nome_solucao, {"erro": f"Solução '{nome_solucao}' não encontrada."})
+
+@tool
+def realizar_inscricao_empresa(
+    nome_empresa: str,
+    cnpj: str,
+    nome_responsavel: str,
+    email_responsavel: str,
+    telefone: str,
+    solucao_interesse: str,
+    mensagem: str = "",
+) -> dict:
+    """Realiza a inscrição de uma empresa em uma solução do SENAI Para Sua Empresa.
+    Args:
+        nome_empresa: Razão social da empresa
+        cnpj: CNPJ da empresa (apenas números)
+        nome_responsavel: Nome completo do responsável pelo contato
+        email_responsavel: E-mail corporativo do responsável
+        telefone: Telefone de contato com DDD
+        solucao_interesse: Nome da solução SENAI de interesse
+        mensagem: Mensagem adicional ou descrição da necessidade (opcional)
+    Returns:
+        Dicionário com protocolo de inscrição, status e próximos passos.
+    """
+    # Em produção, esta tool submete um formulário POST à API do portal SENAI.
+    # O MCP Server (Módulo 07) abstrai essa chamada HTTP.
+    import hashlib, time
+    protocolo = hashlib.md5(f"{cnpj}{time.time()}".encode()).hexdigest()[:10].upper()
+    return {
+        "protocolo": protocolo,
+        "status": "recebido",
+        "empresa": nome_empresa,
+        "solucao": solucao_interesse,
+        "proximos_passos": (
+            "Um consultor SENAI entrará em contato em até 2 dias úteis "
+            "no e-mail informado para agendar uma reunião de alinhamento."
+        ),
+        "contato_emergencia": "0800 0 SENAI (0800 073 624)",
+    }</pre>
+
+  <h3>6.2 agents/senai_empresa_agent/agent.py</h3>
+  <pre># agents/senai_empresa_agent/agent.py
+from dotenv import load_dotenv
+load_dotenv()
+
+from ibm_watsonx_orchestrate.agent_builder.agents import Agent, AgentKind
+from .tools import listar_solucoes_senai, detalhar_solucao_senai, realizar_inscricao_empresa
+
+senai_empresa_agent = Agent(
+    name="SenaiEmpresaAssistant",
+    description=(
+        "Agente especializado no portal SENAI Para Sua Empresa. "
+        "Responde sobre cursos, capacitações corporativas, consultoria "
+        "tecnológica e soluções para empresas. Realiza inscrições via MCP Server."
+    ),
+    instructions=(
+        "Responda sempre em português. "
+        "Baseie suas respostas nas informações do portal SENAI Para Sua Empresa "
+        "(https://www.senai.portaldaindustria.com.br/para-sua-empresa). "
+        "Para inscrições, colete todos os dados obrigatórios antes de submeter. "
+        "Confirme os dados com o usuário antes de chamar realizar_inscricao_empresa. "
+        "Quando não souber a resposta, oriente o usuário a acessar o portal SENAI."
+    ),
+    tools=[listar_solucoes_senai, detalhar_solucao_senai, realizar_inscricao_empresa],
+    kind=AgentKind.EXTERNAL,
+    llm="ibm/granite-3-8b-instruct",
+)</pre>
+
+  <h3>6.3 agents/senai_empresa_agent/__init__.py</h3>
+  <pre>from .agent import senai_empresa_agent</pre>
+
+  <h3>6.4 requirements.txt</h3>
+  <pre>ibm-watsonx-orchestrate-adk>=1.0.0
+requests>=2.31.0
+python-dotenv>=1.0.0
+mcp>=1.0.0</pre>
+
+  <h3>6.5 Deploy e teste via ADK CLI</h3>
+  <pre>source .venv/bin/activate && source .env
+
+# Deploy para o ambiente watsonx Orchestrate
+wx-orchestrate agents deploy agents/senai_empresa_agent/agent.py
+
+# Verificar agentes deployados
+wx-orchestrate agents list
+
+# Testar o agente
+wx-orchestrate agents invoke SenaiEmpresaAssistant \
+  --message "Quais são as soluções de capacitação disponíveis para empresas?"
+
+wx-orchestrate agents invoke SenaiEmpresaAssistant \
+  --message "Quero inscrever minha empresa no programa de Capacitação In Company"</pre>
+</div>
+
+<!-- ===== MÓDULO 7 ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge">Módulo 07</span>
+    <span class="module-title">MCP Server — SENAI Para Sua Empresa</span>
+  </div>
+
+  <p>Neste módulo criamos um <strong>MCP Server Python</strong> que expõe as tools do portal SENAI Para Sua Empresa ao IBM Bob via protocolo STDIO. O servidor abstrai as chamadas HTTP ao portal, tornando as tools diretamente acessíveis no chat do IBM Bob.</p>
+
+  <h3>7.1 Como funciona o MCP Server SENAI</h3>
+  <p>O IBM Bob inicia o servidor MCP como processo filho (STDIO). A comunicação ocorre via JSON-RPC. O servidor implementa as tools <code>listar_solucoes</code>, <code>detalhar_solucao</code> e <code>realizar_inscricao</code> que interagem com o portal SENAI.</p>
+
+  <div class="flow-box" style="text-align:left;font-size:11px;line-height:1.7;">
+    IBM Bob  <span class="arrow">→  stdin (JSON-RPC)  →</span>  MCP Server Python<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="arrow">←  stdout (resultado)  ←</span>  MCP Server Python<br>
+    MCP Server  <span class="arrow">→  HTTP GET/POST  →</span>  portal.senai.portaldaindustria.com.br<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="arrow">←  JSON  ←</span>  API SENAI
+  </div>
+
+  <h3>7.2 mcp_server/senai_empresa_mcp/server.py</h3>
+  <pre># mcp_server/senai_empresa_mcp/server.py
+import requests
+from mcp.server import Server
+from mcp.server.stdio import stdio_server
+from mcp import types
+
+SENAI_BASE = "https://www.senai.portaldaindustria.com.br"
+
+app = Server("senai-empresa-mcp")
+
+@app.list_tools()
+async def list_tools() -> list[types.Tool]:
+    return [
+        types.Tool(
+            name="listar_solucoes",
+            description="Lista soluções e serviços SENAI Para Sua Empresa",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "categoria": {
+                        "type": "string",
+                        "description": "Categoria: capacitacao | consultoria | inovacao"
+                    }
+                },
+            },
+        ),
+        types.Tool(
+            name="detalhar_solucao",
+            description="Retorna detalhes de uma solução SENAI",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "nome_solucao": {
+                        "type": "string",
+                        "description": "Nome exato da solução SENAI"
+                    }
+                },
+                "required": ["nome_solucao"],
+            },
+        ),
+        types.Tool(
+            name="realizar_inscricao",
+            description="Inscreve uma empresa em um programa SENAI Para Sua Empresa",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "nome_empresa":      {"type": "string"},
+                    "cnpj":              {"type": "string"},
+                    "nome_responsavel":  {"type": "string"},
+                    "email_responsavel": {"type": "string"},
+                    "telefone":          {"type": "string"},
+                    "solucao_interesse": {"type": "string"},
+                    "mensagem":          {"type": "string"},
+                },
+                "required": [
+                    "nome_empresa", "cnpj", "nome_responsavel",
+                    "email_responsavel", "telefone", "solucao_interesse"
+                ],
+            },
+        ),
+    ]
+
+@app.call_tool()
+async def call_tool(name: str, arguments: dict) -> list[types.TextContent]:
+    if name == "listar_solucoes":
+        categoria = arguments.get("categoria", "")
+        # Chama a API do portal SENAI (simulado no workshop)
+        solucoes = [
+            {"nome": "Capacitação In Company", "categoria": "capacitacao"},
+            {"nome": "Consultoria em Processos", "categoria": "consultoria"},
+            {"nome": "Laboratórios e Ensaios",  "categoria": "inovacao"},
+        ]
+        resultado = [s for s in solucoes if not categoria or s["categoria"] == categoria]
+        return [types.TextContent(type="text", text=str(resultado))]
+
+    elif name == "detalhar_solucao":
+        nome = arguments["nome_solucao"]
+        return [types.TextContent(type="text",
+            text=f"Detalhes de '{nome}': consulte {SENAI_BASE}/para-sua-empresa")]
+
+    elif name == "realizar_inscricao":
+        import hashlib, time
+        protocolo = hashlib.md5(
+            f"{arguments['cnpj']}{time.time()}".encode()
+        ).hexdigest()[:10].upper()
+        return [types.TextContent(type="text", text=(
+            f"Inscrição recebida! Protocolo: {protocolo}. "
+            "Um consultor SENAI entrará em contato em até 2 dias úteis."
+        ))]
+
+    raise ValueError(f"Tool desconhecida: {name}")
+
+async def main():
+    async with stdio_server() as streams:
+        await app.run(*streams, app.create_initialization_options())
+
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(main())</pre>
+
+  <h3>7.3 Configuração no .bob/mcp.json (projeto)</h3>
+  <p>Crie <code>.bob/mcp.json</code> na raiz do projeto <code>senai-agent/</code>:</p>
+  <pre>{
+  "mcpServers": {
+    "senai-empresa": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["-m", "mcp_server.senai_empresa_mcp.server"],
+      "alwaysAllow": ["listar_solucoes", "detalhar_solucao"],
+      "disabled": false
+    }
+  }
+}</pre>
+  <div class="callout"><strong>Segurança:</strong> Este arquivo é seguro para commitar — não contém credenciais. O servidor é iniciado localmente pelo IBM Bob via STDIO.</div>
+
+  <h3>7.4 Propriedades de configuração MCP — referência</h3>
+  <table>
+    <tr><th>Propriedade</th><th>Tipo</th><th>Obrig.</th><th>Descrição</th></tr>
+    <tr><td><code>type</code></td><td>string</td><td>Não</td><td><code>"stdio"</code> para processo local; <code>"streamable-http"</code> para HTTP remoto</td></tr>
+    <tr><td><code>command</code></td><td>string</td><td><strong>Sim (stdio)</strong></td><td>Executável a invocar (ex: <code>python</code>, <code>node</code>)</td></tr>
+    <tr><td><code>args</code></td><td>array</td><td>Não</td><td>Argumentos para o comando (ex: <code>["-m", "meu.modulo"]</code>)</td></tr>
+    <tr><td><code>url</code></td><td>string</td><td><strong>Sim (http)</strong></td><td>URL completa do endpoint MCP remoto</td></tr>
+    <tr><td><code>headers</code></td><td>object</td><td>Não</td><td>Headers HTTP estáticos (ex: Authorization com token de API)</td></tr>
+    <tr><td><code>alwaysAllow</code></td><td>array</td><td>Não</td><td>Tools aprovadas automaticamente sem confirmação</td></tr>
+    <tr><td><code>disabled</code></td><td>boolean</td><td>Não</td><td><code>true</code> para desabilitar o servidor</td></tr>
+    <tr><td><code>timeout</code></td><td>number</td><td>Não</td><td>Timeout em ms (padrão: 600.000)</td></tr>
+  </table>
+  <div class="callout warn"><strong>Atenção:</strong> A tool <code>realizar_inscricao</code> <strong>não está</strong> em <code>alwaysAllow</code> — o Bob pedirá confirmação antes de submeter dados de inscrição.</div>
+
+  <h3>7.5 Iniciando o servidor e testando</h3>
+  <pre># Verifique que o venv está ativo e as dependências instaladas
+source .venv/bin/activate
+pip install mcp requests
+
+# Testar o servidor MCP manualmente
+python -m mcp_server.senai_empresa_mcp.server</pre>
+
+  <h3>7.6 Usando o MCP SENAI via IBM Bob</h3>
+  <ol>
+    <li>Abra a pasta <code>senai-agent/</code> no IBM Bob (<strong>File → Open Folder</strong>)</li>
+    <li>Abra o painel de chat clicando no ícone do IBM Bob na barra de navegação (ou <kbd>Option+Cmd+B</kbd> no Mac / <kbd>Ctrl+Alt+B</kbd> no Windows)</li>
+    <li>Use os exemplos abaixo no chat:</li>
+  </ol>
+  <pre># Exemplos de uso no painel de chat do IBM Bob:
+"Quais soluções de capacitação o SENAI oferece para empresas?"
+"Detalhe a solução de Consultoria em Processos Industriais"
+"Quero inscrever minha empresa na Capacitação In Company"
+"Faça a inscrição da empresa Exemplo SA, CNPJ 12.345.678/0001-99,
+ responsável João Silva, joao@exemplo.com, (11) 99999-0000"</pre>
+</div>
+
+<!-- ===== MÓDULO 8 ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge">Módulo 08</span>
+    <span class="module-title">Registrando o MCP SENAI no watsonx Orchestrate</span>
+  </div>
+
+  <h3>8.1 Registrar o servidor MCP</h3>
+  <pre>wx-orchestrate mcp register \
+  --name senai-empresa \
+  --transport stdio \
+  --command "python" \
+  --args "-m mcp_server.senai_empresa_mcp.server"</pre>
+
+  <h3>8.2 Verificar registro e listar tools disponíveis</h3>
+  <pre># Listar servidores MCP registrados no Orchestrate
+wx-orchestrate mcp list
+
+# Listar tools expostas pelo servidor SENAI
+wx-orchestrate mcp tools --name senai-empresa</pre>
+</div>
+
+<!-- ===== MÓDULO 9 ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge">Módulo 09</span>
+    <span class="module-title">Criando Hooks de Lifecycle</span>
+  </div>
+
+  <h3>9.1 Hooks disponíveis no IBM Bob</h3>
+  <table>
+    <tr><th>Hook</th><th>Quando executa</th><th>Bloqueante</th><th>Saída (stdout)</th></tr>
+    <tr><td><code>SessionStart</code></td><td>Ao iniciar sessão</td><td>Não</td><td>Injetado como contexto</td></tr>
+    <tr><td><code>UserPromptSubmit</code></td><td>A cada prompt enviado</td><td>Sim (exit 2)</td><td>Injetado com o prompt</td></tr>
+    <tr><td><code>PreToolUse</code></td><td>Antes de executar tool</td><td>Sim (exit 2 / JSON deny)</td><td>JSON para negar/substituir</td></tr>
+    <tr><td><code>PostToolUse</code></td><td>Após tool executar com sucesso</td><td>Não</td><td>Anexado ao resultado</td></tr>
+    <tr><td><code>PreCompact</code></td><td>Antes da compactação de contexto</td><td>Sim (exit 2)</td><td>Ignorado</td></tr>
+    <tr><td><code>PostCompact</code></td><td>Após compactação</td><td>Não</td><td>Ignorado</td></tr>
+    <tr><td><code>Stop</code></td><td>Quando o agente para</td><td>Não</td><td>Ignorado</td></tr>
+  </table>
+
+  <h3>9.2 Configurando hooks — ~/.bob/settings/settings.json</h3>
+  <pre>{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [{ "type": "command", "command": "sh ~/.bob/hooks/session-start.sh" }]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "^write_file$",
+        "hooks": [{ "type": "command", "command": "sh ~/.bob/hooks/log-writes.sh" }]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [{
+          "type": "http",
+          "url": "https://hooks.slack.com/services/&lt;SEU_WEBHOOK&gt;",
+          "timeout": 5
+        }]
+      }
+    ]
+  }
+}</pre>
+
+  <h3>9.3 Script ~/.bob/hooks/session-start.sh</h3>
+  <pre>#!/bin/sh
+mkdir -p ~/.bob/hooks
+
+PROJECT=$(basename "$PWD")
+BRANCH=$(git branch --show-current 2>/dev/null || echo "not a git repo")
+PYTHON_VER=$(python3 --version 2>/dev/null || echo "python3 not found")
+DATE=$(date '+%Y-%m-%d %H:%M:%S')
+
+echo "=== Contexto da Sessão SENAI ==="
+echo "Projeto:   $PROJECT"
+echo "Branch:    $BRANCH"
+echo "Python:    $PYTHON_VER"
+echo "Data/Hora: $DATE"
+echo "================================"</pre>
+
+  <h3>9.4 Script ~/.bob/hooks/log-writes.sh</h3>
+  <pre>#!/bin/sh
+# Audita toda chamada write_file do IBM Bob
+LOGFILE="$HOME/.bob/hooks/write-audit.log"
+echo "$(date '+%Y-%m-%d %H:%M:%S') | WRITE_FILE | $(cat)" >> "$LOGFILE"</pre>
+
+  <h3>9.5 Aplicar permissões de execução</h3>
+  <pre>chmod +x ~/.bob/hooks/session-start.sh
+chmod +x ~/.bob/hooks/log-writes.sh</pre>
+</div>
+
+<!-- ===== MÓDULO 10 ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge">Módulo 10</span>
+    <span class="module-title">Criando Skills no IBM Bob</span>
+  </div>
+
+  <h3>10.1 Estrutura de pastas</h3>
+  <div class="filetree">.bob/
+└── skills/
+    ├── senai-empresa-consulta/
+    │   └── SKILL.md
+    ├── senai-empresa-inscricao/
+    │   └── SKILL.md
+    └── generate-unit-tests/
+        └── SKILL.md</div>
+
+  <h3>10.2 .bob/skills/senai-empresa-consulta/SKILL.md</h3>
+  <pre>---
+name: senai-empresa-consulta
+description: Responde perguntas sobre cursos, soluções e serviços SENAI Para Sua Empresa usando as tools do MCP Server
+---
+
+Ao responder sobre o portal SENAI Para Sua Empresa:
+
+## Fontes de informação
+- Use sempre a tool `listar_solucoes` do MCP Server senai-empresa para buscar dados atualizados
+- Use `detalhar_solucao` quando o usuário pedir informações completas de um serviço específico
+- Referência oficial: https://www.senai.portaldaindustria.com.br/para-sua-empresa
+
+## Categorias disponíveis
+- **capacitacao**: Cursos in company, trilhas corporativas, modalidades EAD e presencial
+- **consultoria**: Diagnóstico de processos, melhoria contínua, normas técnicas
+- **inovacao**: Laboratórios, ensaios, projetos P&D, transferência de tecnologia
+
+## Saída
+- Responda de forma objetiva e profissional em português
+- Sempre inclua o link da solução mencionada
+- Se a empresa perguntar sobre inscrição, ative a skill `senai-empresa-inscricao`</pre>
+
+  <h3>10.3 .bob/skills/senai-empresa-inscricao/SKILL.md</h3>
+  <pre>---
+name: senai-empresa-inscricao
+description: Conduz o fluxo de inscrição de uma empresa em soluções SENAI Para Sua Empresa via MCP Server
+---
+
+Ao receber solicitação de inscrição em programa SENAI:
+
+1. Confirme com o usuário a solução de interesse (use `listar_solucoes` se necessário)
+2. Colete os dados obrigatórios um por vez, de forma conversacional:
+   - Razão social da empresa
+   - CNPJ (apenas números, 14 dígitos)
+   - Nome completo do responsável
+   - E-mail corporativo do responsável
+   - Telefone com DDD
+   - Mensagem adicional (opcional)
+3. Exiba um resumo completo e peça confirmação explícita do usuário
+4. Somente após confirmação, chame a tool `realizar_inscricao` do MCP Server senai-empresa
+5. Informe o protocolo gerado e os próximos passos
+
+## Regras
+- NUNCA submeta a inscrição sem confirmação explícita
+- Valide o CNPJ: 14 dígitos numéricos
+- Valide o e-mail: deve conter @ e domínio corporativo</pre>
+
+  <h3>10.4 .bob/skills/generate-unit-tests/SKILL.md</h3>
+  <pre>---
+name: generate-unit-tests
+description: Gera testes unitários Python com pytest e unittest.mock seguindo padrão AAA
+---
+
+Ao gerar testes unitários Python:
+
+## Obrigatório
+- Framework: pytest (fixtures, parametrize, raises)
+- Mocks: unittest.mock (patch, MagicMock, AsyncMock)
+- Estrutura: Arrange / Act / Assert com comentários
+- Nomenclatura: test_deve_[comportamento]_quando_[condicao]
+
+## Cobertura mínima
+- Caminho feliz (happy path)
+- Valores None, "", [], {}
+- Exceções esperadas (pytest.raises)
+- Valores de borda (0, -1, string vazia, lista muito grande)
+
+## Exemplo
+def test_deve_listar_solucoes_quando_categoria_valida(mock_requests):
+    # Arrange
+    mock_requests.get.return_value.json.return_value = [{"nome": "Capacitação In Company"}]
+    # Act
+    result = listar_solucoes_senai("capacitacao")
+    # Assert
+    assert len(result) > 0
+    assert result[0]["categoria"] == "capacitacao"</pre>
+
+  <h3>10.5 Invocando skills</h3>
+  <pre>/senai-empresa-consulta       # invocação explícita para consultas
+/senai-empresa-inscricao      # invocação explícita para inscrições
+"Quais cursos SENAI disponíveis para minha empresa?"  # auto-ativado
+/skills                       # listar todas as skills</pre>
+</div>
+
+<!-- ===== MÓDULO 11 ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge">Módulo 11</span>
+    <span class="module-title">Custom Modes — Modos Customizados</span>
+  </div>
+
+  <h3>.bob/custom_modes.yaml</h3>
+  <pre>customModes:
+  - slug: senai-empresa
+    name: 🏭 SENAI Para Sua Empresa
+    roleDefinition: >-
+      Você é um assistente especializado no portal SENAI Para Sua Empresa
+      (https://www.senai.portaldaindustria.com.br/para-sua-empresa).
+      Você conhece todas as soluções de capacitação corporativa, consultoria
+      tecnológica, laboratórios e inovação oferecidas pelo SENAI às empresas.
+      Responda sempre em português, de forma clara e profissional.
+    whenToUse: >-
+      Use para responder dúvidas sobre serviços SENAI para empresas,
+      detalhar soluções disponíveis e conduzir inscrições em programas.
+    customInstructions: |-
+      Diretrizes obrigatórias:
+      - Use o MCP Server senai-empresa para buscar dados atualizados do portal
+      - Para inscrições, ative a skill senai-empresa-inscricao
+      - Sempre confirme dados de inscrição antes de submeter
+      - Forneça o link oficial do portal em todas as respostas
+      - Nunca invente informações sobre programas ou preços SENAI
+    groups:
+      - read
+      - edit
+      - execute
+      - mcp
+      - skill
+
+  - slug: senai-empresa-consultor
+    name: 🔍 Consultor SENAI Empresas
+    roleDefinition: >-
+      Você é um consultor de vendas do SENAI especializado em identificar
+      a melhor solução para cada empresa. Você faz perguntas estratégicas
+      para entender o perfil da empresa e recomenda soluções SENAI alinhadas
+      com suas necessidades. Nunca realiza inscrições diretamente — apenas
+      consulta e recomenda.
+    whenToUse: >-
+      Use quando a empresa ainda não sabe qual solução SENAI precisa.
+      Ideal para diagnóstico de necessidades e recomendação de serviços.
+    customInstructions: |-
+      - Faça no máximo 3 perguntas antes de recomendar uma solução
+      - Use `listar_solucoes` e `detalhar_solucao` do MCP senai-empresa
+      - Apenas leia dados — não realize inscrições neste modo
+      - Forneça comparativo entre soluções quando relevante
+    groups:
+      - read
+      - mcp
+      - skill</pre>
+</div>
+
+<!-- ===== MÓDULO 12 ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge">Módulo 12</span>
+    <span class="module-title">Templates de Prompts (.bob/prompts/)</span>
+  </div>
+
+  <h3>consultar-senai-empresa.md</h3>
+  <pre>---
+name: consultar-senai-empresa
+description: Consulta soluções SENAI Para Sua Empresa e apresenta um resumo personalizado por área de atuação
+---
+
+Execute os seguintes passos para consultar soluções SENAI para a empresa {{NOME_EMPRESA}}:
+
+1. Use a tool `listar_solucoes` do MCP Server senai-empresa para buscar todas as categorias
+2. Para cada categoria relevante, use `detalhar_solucao` para obter informações completas
+3. Apresente um resumo personalizado com:
+   - Soluções mais aderentes ao perfil da empresa
+   - Modalidades disponíveis (presencial, EAD, híbrido)
+   - Link oficial para cada solução
+4. Pergunte se o usuário deseja iniciar uma inscrição</pre>
+
+  <h3>iniciar-inscricao.md</h3>
+  <pre>---
+name: iniciar-inscricao
+description: Inicia o processo de inscrição de uma empresa em um programa SENAI Para Sua Empresa
+---
+
+Conduza o processo de inscrição em etapas:
+
+1. Use `listar_solucoes` para confirmar que a solução {{SOLUCAO}} está disponível
+2. Colete os dados obrigatórios de forma conversacional (um por vez):
+   - Razão social da empresa
+   - CNPJ (14 dígitos numéricos)
+   - Nome completo do responsável
+   - E-mail corporativo
+   - Telefone com DDD
+3. Exiba resumo completo e aguarde confirmação explícita ("confirmar" / "sim")
+4. Chame `realizar_inscricao` do MCP senai-empresa apenas após confirmação
+5. Apresente o protocolo e próximos passos ao usuário</pre>
+
+  <h3>gerar-docs.md</h3>
+  <pre>---
+name: gerar-docs
+description: Gera documentação técnica completa para módulos Python e APIs
+---
+
+Gere documentação técnica para o código fornecido:
+
+1. **Docstrings** (Google Style) para todas as classes e funções públicas
+2. **README.md** do módulo com:
+   - Propósito e responsabilidades
+   - Como instalar e configurar (incluindo variáveis de ambiente)
+   - Exemplos de uso com código
+   - Endpoints REST expostos (se houver)
+3. **Diagrama de sequência** em Mermaid para o fluxo principal
+
+Documentação em português, clara e objetiva.</pre>
+</div>
+
+<!-- ===== MÓDULO 13 ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge">Módulo 13</span>
+    <span class="module-title">AGENTS.md e Contexto do Projeto</span>
+  </div>
+
+  <h3>13.1 Gerando com /init no IBM Bob</h3>
+  <ol>
+    <li>Abra a pasta <code>senai-agent/</code> no IBM Bob (<strong>File → Open Folder</strong>)</li>
+    <li>Abra o painel de chat clicando no ícone do IBM Bob na barra de navegação (ou <kbd>Option+Cmd+B</kbd> no Mac / <kbd>Ctrl+Alt+B</kbd> no Windows)</li>
+    <li>Digite <code>/init</code> no chat para inicializar o projeto</li>
+  </ol>
+  <pre># No painel de chat do IBM Bob:
+/init</pre>
+  <p>Arquivos gerados automaticamente:</p>
+  <div class="filetree">AGENTS.md                          ← contexto principal do projeto
+.bob/rules-agent/AGENTS.md        ← regras do modo Agent
+.bob/rules-plan/AGENTS.md         ← regras do modo Plan
+.bob/rules-ask/AGENTS.md          ← regras do modo Ask</div>
+
+  <h3>13.2 AGENTS.md customizado para o projeto</h3>
+  <pre># senai-agent — Contexto do Projeto
+
+## Objetivo do agente
+Agente SenaiEmpresaAssistant especializado no portal SENAI Para Sua Empresa
+(https://www.senai.portaldaindustria.com.br/para-sua-empresa).
+Responde sobre soluções corporativas e realiza inscrições via MCP Server.
+
+## Stack tecnológico
+- Python 3.10+, watsonx Orchestrate ADK
+- MCP Server STDIO (senai_empresa_mcp)
+- IBM Cloud Code Engine (deploy serverless)
+- IBM Cloud Container Registry (imagens Docker)
+
+## Estrutura de pastas
+- `agents/senai_empresa_agent/` — definição do agente ADK
+- `mcp_server/senai_empresa_mcp/` — MCP Server Python (tools SENAI)
+- `scripts/`    — scripts de deploy
+- `.bob/`       — configuração IBM Bob
+
+## Variáveis de ambiente obrigatórias (em .env — nunca commitar)
+- BOB_API_KEY, ORCHESTRATE_API_KEY, ORCHESTRATE_INSTANCE_URL
+- IBM_CLOUD_API_KEY, IBM_CLOUD_REGION, CODE_ENGINE_PROJECT
+
+## Comandos importantes
+- Instalar deps:  pip install -r requirements.txt
+- Testes:         pytest tests/ -v --cov
+- IBM Bob:        Abra o painel de chat do IBM Bob
+- Deploy:         bash scripts/deploy.sh
+
+## Padrões e convenções
+- Type hints obrigatórios em todas as funções públicas
+- Docstrings Google Style para classes e funções
+- Confirmar inscrições antes de submeter ao portal SENAI
+- Cobertura mínima de testes: 80%</pre>
+</div>
+
+<!-- ===== MÓDULO 14 ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge green">Módulo 14</span>
+    <span class="module-title">Dockerfile e Build da Imagem</span>
+  </div>
+
+  <h3>14.1 Dockerfile</h3>
+  <pre>FROM python:3.11-slim
+
+LABEL maintainer="SENAI Dev Team"
+LABEL description="SENAI Empresa Assistant — watsonx Orchestrate Agent"
+
+WORKDIR /app
+
+# Instalar dependências do sistema
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar e instalar dependências Python (aproveita cache de layers)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar código da aplicação
+COPY agents/ ./agents/
+COPY mcp_server/ ./mcp_server/
+
+# Usuário não-root por segurança
+RUN adduser --disabled-password --gecos "" appuser
+USER appuser
+
+EXPOSE 8080
+CMD ["python", "-m", "agents.senai_empresa_agent"]</pre>
+
+  <h3>14.2 .dockerignore</h3>
+  <pre>.env
+.env.*
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.git/
+.bob/
+tests/
+*.md
+*.pdf</pre>
+
+  <h3>14.3 Build e teste local</h3>
+  <pre># Build da imagem
+docker build -t senai-empresa-assistant:latest .
+
+# Testar localmente com as variáveis do .env
+docker run --env-file .env senai-empresa-assistant:latest
+
+# Ver logs do container
+docker logs &lt;container_id&gt;</pre>
+</div>
+
+<!-- ===== MÓDULO 15 ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge green">Módulo 15</span>
+    <span class="module-title">Deploy no IBM Cloud Code Engine</span>
+  </div>
+
+  <h3>15.1 Instalar IBM Cloud CLI e plugins</h3>
+  <pre># macOS
+curl -fsSL https://clis.cloud.ibm.com/install/osx | sh
+
+# Linux
+curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+
+# Instalar plugins
+ibmcloud plugin install code-engine
+ibmcloud plugin install container-registry
+
+# Verificar instalação
+ibmcloud plugin show code-engine
+ibmcloud plugin show container-registry</pre>
+
+  <h3>15.2 scripts/deploy.sh — script completo de deploy</h3>
+  <pre>#!/bin/bash
+# =============================================================================
+# scripts/deploy.sh
+# Deploy do SENAI Empresa Assistant no IBM Cloud Code Engine
+#
+# COMO USAR:
+#   1. Preencha todas as variáveis no arquivo .env (copie de .env.example)
+#   2. Execute: bash scripts/deploy.sh
+# =============================================================================
+
+set -euo pipefail
+
+# ─── Carregar variáveis de ambiente ──────────────────────────────────────────
+if [ -f .env ]; then
+  export $(grep -v '^#' .env | xargs)
+else
+  echo "❌ Arquivo .env não encontrado. Copie .env.example para .env e preencha."
+  exit 1
+fi
+
+# ─── Validar variáveis obrigatórias ──────────────────────────────────────────
+: "${IBM_CLOUD_API_KEY:?Variável IBM_CLOUD_API_KEY não definida no .env}"
+: "${IBM_CLOUD_REGION:?Variável IBM_CLOUD_REGION não definida no .env}"
+: "${IBM_CLOUD_RESOURCE_GROUP:?Variável IBM_CLOUD_RESOURCE_GROUP não definida}"
+: "${IBM_CLOUD_REGISTRY_NAMESPACE:?Variável IBM_CLOUD_REGISTRY_NAMESPACE não definida}"
+: "${CODE_ENGINE_PROJECT:?Variável CODE_ENGINE_PROJECT não definida no .env}"
+
+# ─── Configurações derivadas ──────────────────────────────────────────────────
+APP_NAME="senai-empresa-assistant"
+IMAGE_TAG="${IBM_CLOUD_REGION}.icr.io/${IBM_CLOUD_REGISTRY_NAMESPACE}/${APP_NAME}:latest"
+
+echo "==================================================="
+echo " Deploy: SENAI Empresa Assistant → IBM Cloud Code Engine"
+echo "==================================================="
+echo " Region:    $IBM_CLOUD_REGION"
+echo " Project:   $CODE_ENGINE_PROJECT"
+echo " Image:     $IMAGE_TAG"
+echo "==================================================="
+
+# ─── 1. Login na IBM Cloud ────────────────────────────────────────────────────
+echo "📋 Passo 1/7 — Login na IBM Cloud..."
+ibmcloud login --apikey "$IBM_CLOUD_API_KEY" \
+  -r "$IBM_CLOUD_REGION" -g "$IBM_CLOUD_RESOURCE_GROUP" --quiet
+
+# ─── 2. Login no Container Registry ─────────────────────────────────────────
+echo "📋 Passo 2/7 — Login no Container Registry..."
+ibmcloud cr login
+ibmcloud cr region-set "$IBM_CLOUD_REGION"
+
+# ─── 3. Criar namespace do registry (se não existir) ─────────────────────────
+echo "📋 Passo 3/7 — Verificando namespace do registry..."
+if ! ibmcloud cr namespace-list | grep -q "$IBM_CLOUD_REGISTRY_NAMESPACE"; then
+  echo "   Criando namespace: $IBM_CLOUD_REGISTRY_NAMESPACE"
+  ibmcloud cr namespace-add "$IBM_CLOUD_REGISTRY_NAMESPACE"
+else
+  echo "   Namespace já existe: $IBM_CLOUD_REGISTRY_NAMESPACE"
+fi
+
+# ─── 4. Build e push da imagem Docker ────────────────────────────────────────
+echo "📋 Passo 4/7 — Build e push da imagem Docker..."
+docker build -t "$IMAGE_TAG" .
+docker push "$IMAGE_TAG"
+echo "   ✅ Imagem publicada: $IMAGE_TAG"
+
+# ─── 5. Selecionar / criar projeto Code Engine ───────────────────────────────
+echo "📋 Passo 5/7 — Configurando projeto Code Engine..."
+if ibmcloud ce project list | grep -q "$CODE_ENGINE_PROJECT"; then
+  ibmcloud ce project select --name "$CODE_ENGINE_PROJECT"
+else
+  ibmcloud ce project create --name "$CODE_ENGINE_PROJECT"
+fi
+
+# ─── 6. Criar secret com credenciais da aplicação ────────────────────────────
+echo "📋 Passo 6/7 — Criando/atualizando secret com credenciais..."
+ibmcloud ce secret delete --name senai-agent-secrets --force 2>/dev/null || true
+
+ibmcloud ce secret create \
+  --name senai-agent-secrets \
+  --from-literal ORCHESTRATE_API_KEY="$ORCHESTRATE_API_KEY" \
+  --from-literal ORCHESTRATE_INSTANCE_URL="$ORCHESTRATE_INSTANCE_URL"
+
+echo "   ✅ Secret 'senai-agent-secrets' criado"
+
+# ─── 7. Deploy / atualizar aplicação no Code Engine ──────────────────────────
+echo "📋 Passo 7/7 — Deploy da aplicação no Code Engine..."
+
+if ibmcloud ce app list | grep -q "$APP_NAME"; then
+  echo "   Atualizando aplicação existente: $APP_NAME"
+  ibmcloud ce app update \
+    --name "$APP_NAME" \
+    --image "$IMAGE_TAG" \
+    --env-from-secret senai-agent-secrets \
+    --min-scale 0 \
+    --max-scale 5 \
+    --memory 2G \
+    --cpu 0.5
+else
+  echo "   Criando nova aplicação: $APP_NAME"
+  ibmcloud ce app create \
+    --name "$APP_NAME" \
+    --image "$IMAGE_TAG" \
+    --env-from-secret senai-agent-secrets \
+    --min-scale 0 \
+    --max-scale 5 \
+    --memory 2G \
+    --cpu 0.5 \
+    --port 8080
+fi
+
+# ─── Resultado ────────────────────────────────────────────────────────────────
+echo ""
+echo "==================================================="
+echo " ✅ Deploy concluído com sucesso!"
+echo "==================================================="
+
+APP_URL=$(ibmcloud ce app get --name "$APP_NAME" --output json | \
+  python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('status',{}).get('url','N/A'))")
+
+echo " URL da aplicação: $APP_URL"
+echo ""
+echo " Comandos úteis:"
+echo "   ibmcloud ce app get  --name $APP_NAME"
+echo "   ibmcloud ce app logs --name $APP_NAME --follow"
+echo "==================================================="</pre>
+
+  <h3>15.3 Executar o deploy</h3>
+  <pre>chmod +x scripts/deploy.sh
+bash scripts/deploy.sh</pre>
+
+  <h3>15.4 Comandos úteis pós-deploy</h3>
+  <table>
+    <tr><th>Ação</th><th>Comando</th></tr>
+    <tr><td>Ver status</td><td><code>ibmcloud ce app get --name senai-empresa-assistant</code></td></tr>
+    <tr><td>Logs em tempo real</td><td><code>ibmcloud ce app logs --name senai-empresa-assistant --follow</code></td></tr>
+    <tr><td>Listar revisões</td><td><code>ibmcloud ce app revision list --app senai-empresa-assistant</code></td></tr>
+    <tr><td>Rollback</td><td><code>ibmcloud ce app rollout --name senai-empresa-assistant --revision &lt;name&gt;</code></td></tr>
+    <tr><td>Escalar instâncias</td><td><code>ibmcloud ce app update --name senai-empresa-assistant --min-scale 1 --max-scale 10</code></td></tr>
+    <tr><td>Deletar app</td><td><code>ibmcloud ce app delete --name senai-empresa-assistant</code></td></tr>
+  </table>
+</div>
+
+<!-- ===== APÊNDICE A ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge gray">Apêndice A</span>
+    <span class="module-title">Estrutura Completa de Arquivos</span>
+  </div>
+
+  <h3>Projeto senai-agent/</h3>
+  <div class="filetree">senai-agent/
+├── .env                         ← NÃO commitar (credenciais reais)
+├── .env.example                 ← commitar (template sem valores)
+├── .dockerignore
+├── .gitignore
+├── Dockerfile
+├── requirements.txt             ← ibm-watsonx-orchestrate-adk, requests, python-dotenv, mcp
+├── AGENTS.md                    ← gerado por /init
+├── agents/
+│   └── senai_empresa_agent/
+│       ├── __init__.py
+│       ├── agent.py             ← definição do agente ADK
+│       └── tools.py             ← tools SENAI (listar, detalhar, inscrever)
+├── mcp_server/
+│   └── senai_empresa_mcp/
+│       ├── __init__.py
+│       └── server.py            ← MCP server Python STDIO
+├── tests/
+│   ├── test_tools.py
+│   └── test_agent.py
+├── scripts/
+│   └── deploy.sh                ← deploy completo Code Engine (7 passos)
+└── .bob/
+    ├── mcp.json                 ← MCP servers do projeto
+    ├── settings.json            ← Hooks do projeto
+    ├── custom_modes.yaml        ← Modos customizados
+    ├── rules-agent/AGENTS.md
+    ├── rules-plan/AGENTS.md
+    ├── rules-ask/AGENTS.md
+    ├── skills/
+    │   ├── senai-empresa-consulta/SKILL.md
+    │   ├── senai-empresa-inscricao/SKILL.md
+    │   └── generate-unit-tests/SKILL.md
+    └── prompts/
+        ├── consultar-senai-empresa.md
+        ├── iniciar-inscricao.md
+        └── gerar-docs.md</div>
+
+  <h3>Configurações globais (~/.bob/)</h3>
+  <div class="filetree">~/.bob/
+├── settings/
+│   ├── settings.json            ← Hooks globais
+│   ├── mcp.json                 ← MCP servers globais
+│   └── custom_modes.yaml        ← Modos globais
+├── hooks/
+│   ├── session-start.sh         ← chmod +x obrigatório
+│   └── log-writes.sh            ← chmod +x obrigatório
+└── AGENTS.md                    ← Contexto global</div>
+</div>
+
+<!-- ===== APÊNDICE B ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge gray">Apêndice B</span>
+    <span class="module-title">Checklist de Credenciais Necessárias</span>
+  </div>
+  <table>
+    <tr><th>Credencial</th><th>Onde obter</th><th>Variável no .env</th></tr>
+    <tr><td><strong>Bob API Key</strong></td><td>https://bob.ibm.com → Account → API Keys → Create (Scope: Inference)</td><td><code>BOB_API_KEY</code></td></tr>
+    <tr><td><strong>watsonx Orchestrate API Key</strong></td><td>Console watsonx Orchestrate → Settings → API Keys</td><td><code>ORCHESTRATE_API_KEY</code></td></tr>
+    <tr><td><strong>watsonx Orchestrate URL</strong></td><td>Console watsonx Orchestrate → Instance details</td><td><code>ORCHESTRATE_INSTANCE_URL</code></td></tr>
+    <tr><td><strong>IBM Cloud API Key</strong></td><td>IBM Cloud → Gerenciar (Manage) → Acesso → Chaves de API</td><td><code>IBM_CLOUD_API_KEY</code></td></tr>
+    <tr><td><strong>IBM Cloud Region</strong></td><td>Região do Code Engine (ex: us-south, eu-de)</td><td><code>IBM_CLOUD_REGION</code></td></tr>
+    <tr><td><strong>Resource Group</strong></td><td>IBM Cloud → Gerenciar → Grupos de recursos</td><td><code>IBM_CLOUD_RESOURCE_GROUP</code></td></tr>
+    <tr><td><strong>ICR Namespace</strong></td><td>IBM Cloud → Container Registry → Namespaces (criar se não existir)</td><td><code>IBM_CLOUD_REGISTRY_NAMESPACE</code></td></tr>
+    <tr><td><strong>Code Engine Project</strong></td><td>Nome do projeto a criar/usar no Code Engine</td><td><code>CODE_ENGINE_PROJECT</code></td></tr>
+  </table>
+</div>
+
+<!-- ===== APÊNDICE C ===== -->
+<div class="doc-page page-break">
+  <div class="module-header">
+    <span class="module-num-badge gray">Apêndice C</span>
+    <span class="module-title">Troubleshooting</span>
+  </div>
+  <table>
+    <tr><th>Problema</th><th>Causa provável</th><th>Solução</th></tr>
+    <tr><td>IBM Bob não conecta após instalar</td><td>Autenticação pendente ou API Key inválida</td><td>Clique em <strong>Sign in</strong> no IBM Bob ou verifique a API Key em <strong>Settings → IBM Bob: API Key</strong></td></tr>
+    <tr><td>Bob pede login toda sessão</td><td>API Key não salva nas configurações</td><td>Configure a API Key permanentemente em <strong>IBM Bob → Settings → IBM Bob: API Key</strong></td></tr>
+    <tr><td>MCP server não conecta</td><td>Caminho ou comando incorreto no <code>mcp.json</code></td><td>Teste manualmente: <code>python -m mcp_server.senai_empresa_mcp.server</code></td></tr>
+    <tr><td>Tool SENAI retorna erro HTTP</td><td>Portal SENAI indisponível ou URL incorreta</td><td>Verifique acesso a https://www.senai.portaldaindustria.com.br e a constante <code>SENAI_BASE_URL</code></td></tr>
+    <tr><td>Skill não ativa automaticamente</td><td><code>description</code> ausente ou muito vaga no SKILL.md</td><td>Adicione <code>description</code> detalhada no front matter do SKILL.md</td></tr>
+    <tr><td>Hook não executa</td><td>Arquivo sem permissão de execução</td><td>Execute <code>chmod +x ~/.bob/hooks/*.sh</code></td></tr>
+    <tr><td><code>docker push</code> falha (401/403)</td><td>Não autenticado no IBM Container Registry</td><td>Execute <code>ibmcloud cr login</code> antes do push</td></tr>
+    <tr><td>Code Engine deploy falha com 403</td><td>API Key IBM Cloud sem permissões no Code Engine</td><td>Garanta role <strong>Manager</strong> no Code Engine para a API Key</td></tr>
+    <tr><td>ADK deploy falha</td><td>Credenciais do Orchestrate não configuradas</td><td>Exporte <code>ORCHESTRATE_API_KEY</code> e <code>ORCHESTRATE_INSTANCE_URL</code></td></tr>
+    <tr><td>Custom mode não aparece</td><td>YAML inválido ou slug conflita com modo padrão</td><td>Valide o YAML; verifique se o slug não é <code>agent</code>, <code>plan</code> ou <code>ask</code></td></tr>
+    <tr><td>Bob não lê AGENTS.md</td><td>Pasta não confiável (untrusted folder)</td><td>Adicione a pasta à lista de trusted folders nas configurações do IBM Bob</td></tr>
+    <tr><td><code>module not found: mcp</code></td><td>Biblioteca <code>mcp</code> não instalada</td><td>Execute <code>pip install mcp</code> no venv ativo</td></tr>
+  </table>
+
+  <div class="doc-footer">
+    <div>
+      <strong>Sergio Gama</strong> · Principal AI Solution Architect · TD Synnex<br>
+      Hands-On IBM Bob + watsonx Orchestrate — SENAI Para Sua Empresa
+    </div>
+    <div style="text-align:right;">
+      Novembro / 2026<br>
+      Versão 1.0
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
